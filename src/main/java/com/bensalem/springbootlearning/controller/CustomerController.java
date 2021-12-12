@@ -29,7 +29,7 @@ public class CustomerController {
         return customerService.findCustomerById(id);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public boolean deleteCustomer(@PathVariable("id") Long id){
         return customerService.deleteCustomerById(id);
     }
