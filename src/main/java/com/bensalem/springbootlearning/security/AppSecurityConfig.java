@@ -1,6 +1,6 @@
 package com.bensalem.springbootlearning.security;
 
-import com.bensalem.springbootlearning.model.ApplicationUserRole;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
 
 import static com.bensalem.springbootlearning.model.ApplicationUserRole.*;
 
@@ -29,8 +31,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.csrf().disable().
-                authorizeRequests()
+        http
+                //.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                //.and()
+                .csrf().disable()
+                .authorizeRequests()
                 .antMatchers("/","/customer").permitAll()
                 .antMatchers("/delete/**").hasAnyRole()
                 .antMatchers("/update/**").hasAnyRole()
@@ -46,19 +51,32 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     protected UserDetailsService userDetailsService() {
         UserDetails admin = User.builder()
-                .username("ismail")
+                .username("admin")
                 .password(passwordEncoder.encode("pass123"))
                 .roles(ADMIN.name())
                 .build();
 
-        UserDetails youssef = User.builder()
-                .username("youssef")
+        UserDetails customer = User.builder()
+                .username("customer")
                 .password(passwordEncoder.encode("pass123?"))
                 .roles(CUSTOMER.name())
                 .build();
 
+        UserDetails admin2 = User.builder()
+                .username("admin2")
+                .password(passwordEncoder.encode("pass123?"))
+                .authorities(ADMIN.getGrantedAuthorities())
+                .build();
 
-        return new InMemoryUserDetailsManager(admin,youssef);
+        UserDetails customer2 = User.builder()
+                .username("customer2")
+                .password(passwordEncoder.encode("pass123?"))
+                .authorities(CUSTOMER.getGrantedAuthorities())
+                .build();
+
+
+
+        return new InMemoryUserDetailsManager(admin,customer,admin2,customer2);
     }
 
 

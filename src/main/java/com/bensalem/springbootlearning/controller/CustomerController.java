@@ -3,6 +3,7 @@ package com.bensalem.springbootlearning.controller;
 import com.bensalem.springbootlearning.model.Customer;
 import com.bensalem.springbootlearning.service.CustomerServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,6 +38,12 @@ public class CustomerController {
     @PutMapping("/update")
     public Customer updateCustomer(@RequestBody Customer customer){
         return customerService.saveCustomer(customer);
+    }
+
+    @GetMapping("/perm/list")
+    @PreAuthorize("hasAuthority('customer:add')")
+    public String testPermissions(){
+        return "Test succeeded ! ";
     }
 
 }
